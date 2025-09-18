@@ -1,0 +1,164 @@
+/* General Layout */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  margin: 0;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+  background-color: #f7f7f7;
+}
+
+.save-status-message {
+  color: red;
+  margin-right: auto;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background-color: #ffe0e0;
+  border: 1px solid red;
+}
+
+.save-button {
+  padding: 8px 16px;
+  border: 1px solid #007bff;
+  background-color: #fff;
+  color: #007bff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* This is the key fix for the layout */
+.dndflow {
+  display: flex;
+  flex-direction: row;
+  /* Ensures items are side-by-side */
+  flex-grow: 1;
+  /* Takes up remaining vertical space */
+}
+
+.reactflow-wrapper {
+  flex-grow: 1;
+  /* Allows the canvas to take up available horizontal space */
+  height: 100%;
+}
+
+.sidebar {
+  width: 25%;
+  min-width: 250px;
+  border-left: 1px solid #ddd;
+}
+
+/* Nodes Panel Styling */
+.nodes-panel {
+  padding: 15px;
+}
+
+.panel-description {
+  margin-bottom: 20px;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.dnd-node {
+  padding: 15px 10px;
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  cursor: grab;
+  background-color: white;
+  color: #007bff;
+  font-weight: 500;
+}
+
+.dnd-node span {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+/* Settings Panel */
+.settings-panel {
+  padding: 15px;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  margin-right: 10px;
+  padding: 0 5px;
+}
+
+.panel-content label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.panel-content textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Custom Node */
+.text-message-node {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: white;
+  min-width: 200px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.text-message-node.selected {
+  border: 1px solid #007bff;
+  box-shadow: 0 0 0 1px #007bff;
+}
+
+.node-header {
+  padding: 8px;
+  background-color: #b2f0e3;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  font-weight: bold;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+}
+
+.node-header span {
+  margin-right: 5px;
+}
+
+.node-body {
+  padding: 15px;
+  font-size: 0.9em;
+  color: #333;
+}
