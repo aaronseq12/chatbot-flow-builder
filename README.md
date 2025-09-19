@@ -4,4 +4,4 @@ This is a simple chatbot flow builder built with React and React Flow, for a Wor
 
 ## Live Demo
 
-You can view the live application here: [[https://your-project-url.vercel.app](https://chatbot-flow-builder-eua4w3cph-aaronseq12s-projects.vercel.app/)]([https://your-project-url.vercel.app](https://chatbot-flow-builder-eua4w3cph-aaronseq12s-projects.vercel.app/))
+You can view the live application here: [[https://chatbot.vercel.app](https://chatbot-flow-builder-eua4w3cph-aaronseq12s-projects.vercel.app/)]
