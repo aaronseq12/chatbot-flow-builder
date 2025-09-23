@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -6,43 +6,37 @@ import ReactFlow, {
   useEdgesState,
   Controls,
   Background,
-} from 'reactflow';
-import 'reactflow/dist/style.css';
-import './App.css';
+} from '@xyflow/react'; // Updated import
+import '@xyflow/react/dist/style.css'; // Updated import
 
 import NodesPanel from './components/Panels/NodesPanel';
 import SettingsPanel from './components/Panels/SettingsPanel';
 import Header from './components/Header';
 import TextMessageNode from './components/CustomNodes/TextMessageNode';
 
+import './App.css';
+
 const nodeTypes = { textMessage: TextMessageNode };
+let id = 1;
+const getUniqueNodeId = () => `text-node-${id++}`;
 
-let id = 0;
-const getId = () => `dndnode_${id++}`;
-
-const App = () => {
+const FlowBuilder = () => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  const [selectedNode, setSelectedNode] = useState(null);
   const [saveStatus, setSaveStatus] = useState('');
 
-  // Find the selected node directly from the nodes array on every render.
-  // This ensures it's always up-to-date.
-  const selectedNode = nodes.find((node) => node.selected);
-
-  const onNodeClick = useCallback(
-    (event, node) => {
-      // Set the 'selected' property on the clicked node
-      setNodes((nds) =>
-        nds.map((n) => ({
-          ...n,
-          selected: n.id === node.id,
-        }))
-      );
-    },
-    [setNodes]
-  );
+  // This callback is triggered when a node is clicked, or the selection changes.
+  const onSelectionChange = useCallback((elements) => {
+    const selected = elements.nodes[0];
+    if (selected) {
+      setSelectedNode(selected);
+    } else {
+      setSelectedNode(null);
+    }
+  }, []);
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -59,12 +53,14 @@ const App = () => {
         x: event.clientX,
         y: event.clientY,
       });
+
       const newNode = {
-        id: getId(),
+        id: getUniqueNodeId(),
         type,
         position,
-        data: { label: `text message` }, // Changed initial text
+        data: { label: 'New message' },
       };
+
       setNodes((nds) => nds.concat(newNode));
     },
     [reactFlowInstance, setNodes]
@@ -72,40 +68,35 @@ const App = () => {
 
   const onConnect = useCallback(
     (params) => {
-      const sourceHandleHasEdge = edges.some(
-        (edge) => edge.source === params.source
-      );
+      const sourceHandleHasEdge = edges.some(edge => edge.source === params.source);
       if (!sourceHandleHasEdge) {
         setEdges((eds) => addEdge(params, eds));
+      } else {
+        console.warn("Source handle already has a connection.");
       }
     },
     [edges, setEdges]
   );
 
   const handleSave = useCallback(() => {
-    const nodesWithEmptyTargets = nodes.filter(
+    const nodesWithNoTargetEdge = nodes.filter(
       (node) => !edges.some((edge) => edge.target === node.id)
-    ).length;
+    );
 
-    if (nodes.length > 1 && nodesWithEmptyTargets > 1) {
-      setSaveStatus('Error: Cannot save flow');
+    if (nodes.length > 1 && nodesWithNoTargetEdge.length > 1) {
+      setSaveStatus('Error: More than one node has an empty target.');
       setTimeout(() => setSaveStatus(''), 3000);
     } else {
-      setSaveStatus('Flow Saved!');
+      setSaveStatus('Flow Saved Successfully!');
       console.log('Flow saved:', { nodes, edges });
       setTimeout(() => setSaveStatus(''), 3000);
     }
   }, [nodes, edges]);
 
-  const clearSelection = () => {
-    // Deselect all nodes
-    setNodes((nds) => nds.map((n) => ({ ...n, selected: false })));
-  };
-
   return (
     <div className="app-container">
       <Header onSave={handleSave} saveStatus={saveStatus} />
-      <div className="dndflow">
+      <main className="flow-builder-main">
         <ReactFlowProvider>
           <div className="reactflow-wrapper" ref={reactFlowWrapper}>
             <ReactFlow
@@ -117,9 +108,8 @@ const App = () => {
               onInit={setReactFlowInstance}
               onDrop={onDrop}
               onDragOver={onDragOver}
+              onSelectionChange={onSelectionChange}
               nodeTypes={nodeTypes}
-              onNodeClick={onNodeClick}
-              onPaneClick={clearSelection}
               fitView
             >
               <Controls />
@@ -127,21 +117,20 @@ const App = () => {
             </ReactFlow>
           </div>
         </ReactFlowProvider>
-        <div className="sidebar">
-          {/* Use the dynamically found selectedNode for rendering */}
+        <aside className="sidebar">
           {selectedNode ? (
             <SettingsPanel
               selectedNode={selectedNode}
               setNodes={setNodes}
-              onBack={clearSelection}
+              onClearSelection={() => setSelectedNode(null)}
             />
           ) : (
             <NodesPanel />
           )}
-        </div>
-      </div>
+        </aside>
+      </main>
     </div>
   );
 };
 
-export default App;
+export default FlowBuilder;
