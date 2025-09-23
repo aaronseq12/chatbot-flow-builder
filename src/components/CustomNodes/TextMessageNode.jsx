@@ -1,13 +1,13 @@
 import React, { memo } from 'react';
-import { Handle, Position } from 'reactflow';
+import { Handle, Position } from '@xyflow/react'; // CORRECTED IMPORT
 
-const TextMessageNode = ({ data, isConnectable, selected }) => {
+const TextMessageNode = ({ data, selected }) => {
+    // isConnectable prop is handled by React Flow internally, no need to pass it down
     return (
         <div className={`text-message-node ${selected ? 'selected' : ''}`}>
             <Handle
                 type="target"
                 position={Position.Left}
-                isConnectable={isConnectable}
             />
             <div className="node-header">
                 <span>💬 Send Message</span>
@@ -18,7 +18,6 @@ const TextMessageNode = ({ data, isConnectable, selected }) => {
             <Handle
                 type="source"
                 position={Position.Right}
-                isConnectable={isConnectable}
             />
         </div>
     );
