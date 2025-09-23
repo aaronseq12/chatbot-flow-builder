@@ -6,8 +6,8 @@ import ReactFlow, {
   useEdgesState,
   Controls,
   Background,
-} from '@xyflow/react'; // Updated import
-import '@xyflow/react/dist/style.css'; // Updated import
+} from '@xyflow/react'; // CORRECTED IMPORT
+import '@xyflow/react/dist/style.css'; // CORRECTED IMPORT
 
 import NodesPanel from './components/Panels/NodesPanel';
 import SettingsPanel from './components/Panels/SettingsPanel';
@@ -18,9 +18,9 @@ import './App.css';
 
 const nodeTypes = { textMessage: TextMessageNode };
 let id = 1;
-const getUniqueNodeId = () => `text-node-${id++}`;
+const getUniqueNodeId = () => `dnd-node-${id++}`;
 
-const FlowBuilder = () => {
+const FlowBuilderApp = () => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -28,14 +28,9 @@ const FlowBuilder = () => {
   const [selectedNode, setSelectedNode] = useState(null);
   const [saveStatus, setSaveStatus] = useState('');
 
-  // This callback is triggered when a node is clicked, or the selection changes.
-  const onSelectionChange = useCallback((elements) => {
-    const selected = elements.nodes[0];
-    if (selected) {
-      setSelectedNode(selected);
-    } else {
-      setSelectedNode(null);
-    }
+  const onSelectionChange = useCallback(({ nodes }) => {
+    // onSelectionChange provides the selected nodes directly
+    setSelectedNode(nodes[0] || null);
   }, []);
 
   const onDragOver = useCallback((event) => {
@@ -47,7 +42,7 @@ const FlowBuilder = () => {
     (event) => {
       event.preventDefault();
       const type = event.dataTransfer.getData('application/reactflow');
-      if (typeof type === 'undefined' || !type) return;
+      if (!type || !reactFlowInstance) return;
 
       const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX,
@@ -80,7 +75,7 @@ const FlowBuilder = () => {
 
   const handleSave = useCallback(() => {
     const nodesWithNoTargetEdge = nodes.filter(
-      (node) => !edges.some((edge) => edge.target === node.id)
+      (node) => node.type !== 'input' && !edges.some((edge) => edge.target === node.id)
     );
 
     if (nodes.length > 1 && nodesWithNoTargetEdge.length > 1) {
@@ -122,7 +117,7 @@ const FlowBuilder = () => {
             <SettingsPanel
               selectedNode={selectedNode}
               setNodes={setNodes}
-              onClearSelection={() => setSelectedNode(null)}
+              onClearSelection={() => setSelectedNode(null)} // This makes the back button work
             />
           ) : (
             <NodesPanel />
@@ -133,4 +128,4 @@ const FlowBuilder = () => {
   );
 };
 
-export default FlowBuilder;
+export default FlowBuilderApp;
